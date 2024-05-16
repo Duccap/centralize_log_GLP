@@ -50,16 +50,17 @@ services:
       options: 
         tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
 
-  # log-producer:
-  #   image: my-log-producer:latest
-  #   container_name: log-producer
-  #   restart: always
-  #   volumes:
-  #     - ./scripts/log_producer.sh:/app/log_producer.sh
-  #   networks:
-  #     - loki
-  #   logging:
-  #     driver: "json-file"
-  #     options:
-  #       tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
-  #   command: ["/bin/bash", "/app/log_producer.sh"]
+  log-producer:
+    image: alpine:3.12
+    container_name: log-producer
+    restart: always
+    volumes:
+      - ./scripts/log_producer.sh:/app/log_producer.sh
+    networks:
+      - loki
+    logging:
+      driver: "json-file"
+      options:
+        tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+    command: sh /app/log_producer.sh
+    
