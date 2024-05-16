@@ -1,0 +1,65 @@
+version: "3"
+
+networks:
+  loki:
+
+services:
+  loki:
+    image: grafana/loki:1.4.1
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - loki
+
+  promtail:
+    image: grafana/promtail:1.4.1
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers
+      - ./promtial_conf/docker-config.yml:/etc/promtail/docker-config.yml
+    command: -config.file=/etc/promtail/docker-config.yml
+    networks:
+      - loki
+
+  grafana:
+      restart: always
+      image: grafana/grafana:master
+      container_name: grafana
+      ports:
+          - "3000:3000"
+      volumes:
+      - ./grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      networks:
+        - loki
+######## TEST SERVICES ########
+  postgres-test:
+    image: postgres:12-alpine
+    container_name: postgres-test
+    restart: always
+    environment:
+      - POSTGRES_USER=myuser
+      - POSTGRES_PASSWORD=mypassword
+      - POSTGRES_DB=mydatabase
+    ports:
+      - "5433:5432"
+    networks:
+      - loki
+    logging:
+      driver: "json-file"
+      options: 
+        tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+
+  # log-producer:
+  #   image: my-log-producer:latest
+  #   container_name: log-producer
+  #   restart: always
+  #   volumes:
+  #     - ./scripts/log_producer.sh:/app/log_producer.sh
+  #   networks:
+  #     - loki
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       tag: "{{.ImageName}}|{{.Name}}|{{.ImageFullID}}|{{.FullID}}"
+  #   command: ["/bin/bash", "/app/log_producer.sh"]
