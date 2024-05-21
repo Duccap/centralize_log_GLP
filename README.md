@@ -1,4 +1,4 @@
-#Centralize_log_GLP
+# Centralize_log_GLP
 A project to gather logs and visualize them to clients, currently it focuses on working with docker containers.
 
 ## Requirements
