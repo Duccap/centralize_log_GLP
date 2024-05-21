@@ -16,7 +16,7 @@ services:
     image: grafana/promtail:1.4.1
     volumes:
       - /var/lib/docker/containers:/var/lib/docker/containers
-      - ./promtial_conf/docker-config.yml:/etc/promtail/docker-config.yml
+      - ./promtail_conf/docker-config.yml:/etc/promtail/docker-config.yml
     command: -config.file=/etc/promtail/docker-config.yml
     networks:
       - loki
